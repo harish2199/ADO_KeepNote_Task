@@ -4,12 +4,24 @@ namespace Day2_KeepNote_Task
 {
     public class Notes
     {
-        public void Add_Notes()
+        private static SqlConnection GetConnection()
         {
             SqlConnection con = new SqlConnection("server=IN-333K9S3;database=ado_demos;Integrated Security = true");
-            string query = "select * from Keep_Note";
-            SqlDataAdapter adapter = new SqlDataAdapter(query, con);
+            return con;
+        }
 
+        private static SqlDataAdapter GetDataAdapter(string query)
+        {
+            SqlConnection con = GetConnection();
+            SqlDataAdapter adapter = new SqlDataAdapter(query, con);
+            return adapter;
+        }
+
+
+        public void Add_Notes()
+        {
+            string query = "select * from Keep_Note";
+            SqlDataAdapter adapter = GetDataAdapter(query);
             DataSet ds = new DataSet();
 
             adapter.Fill(ds);
@@ -39,11 +51,10 @@ namespace Day2_KeepNote_Task
 
         public void Get_Notes()
         {
-            SqlConnection con = new SqlConnection("server=IN-333K9S3;database=ado_demos;Integrated Security = true");
             Console.WriteLine("Enter Notes Id to get notes");
             int id = int.Parse(Console.ReadLine());
             string query = $"select * from Keep_Note where ID = {id}";
-            SqlDataAdapter adapter = new SqlDataAdapter(query, con);
+            SqlDataAdapter adapter = GetDataAdapter(query);
 
             DataSet ds = new DataSet();
 
@@ -62,9 +73,8 @@ namespace Day2_KeepNote_Task
 
         public void Get_All_Notes()
         {
-            SqlConnection con = new SqlConnection("server=IN-333K9S3;database=ado_demos;Integrated Security = true");
             string query = $"select * from Keep_Note";
-            SqlDataAdapter adapter = new SqlDataAdapter(query, con);
+            SqlDataAdapter adapter = GetDataAdapter(query);
 
             DataSet ds = new DataSet();
 
@@ -87,15 +97,14 @@ namespace Day2_KeepNote_Task
 
         public void Update_Notes()
         {
-            SqlConnection con = new SqlConnection("server=IN-333K9S3;database=ado_demos;Integrated Security = true");
             Console.WriteLine("Enter Notes Id to Update");
             int id = int.Parse(Console.ReadLine());
             string query = $"select * from Keep_Note where ID = {id}";
-            SqlDataAdapter adp = new SqlDataAdapter(query, con);
+            SqlDataAdapter adapter = GetDataAdapter(query);
 
             DataSet ds = new DataSet();
 
-            adp.Fill(ds);
+            adapter.Fill(ds);
 
             Console.Write("Enter Updated Title: ");
             string title = Console.ReadLine();
@@ -110,28 +119,27 @@ namespace Day2_KeepNote_Task
             ds.Tables[0].Rows[0]["Date"] = date;
 
 
-            SqlCommandBuilder builder = new SqlCommandBuilder(adp);
+            SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
 
-            adp.Update(ds);
+            adapter.Update(ds);
             Console.WriteLine("Data updated sucessfully");
         }
         public void Delete_Notes()
         {
-            SqlConnection con = new SqlConnection("server=IN-333K9S3;database=ado_demos;Integrated Security = true");
             Console.WriteLine("Enter Notes Id to delete");
             int id = int.Parse(Console.ReadLine());
             string query = $"select * from Keep_Note where ID = {id}";
-            SqlDataAdapter adp = new SqlDataAdapter(query, con);
+            SqlDataAdapter adapter = GetDataAdapter(query);
 
             DataSet ds = new DataSet();
 
-            adp.Fill(ds);
+            adapter.Fill(ds);
 
             ds.Tables[0].Rows[0].Delete();
 
-            SqlCommandBuilder builder = new SqlCommandBuilder(adp);
+            SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
 
-            adp.Update(ds);
+            adapter.Update(ds);
             Console.WriteLine("Notes deleted sucessfully");
         }
     }
